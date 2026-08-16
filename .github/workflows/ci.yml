@@ -15,6 +15,19 @@ permissions:
   contents: read
 
 jobs:
+  actionlint:
+    name: GitHub Actions lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install actionlint
+        run: bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/v1.7.12/scripts/download-actionlint.bash)
+
+      - name: Lint workflows
+        run: ./actionlint -color
+
   go-hello:
     name: Go fixture
     uses: ./.github/workflows/go-ci.yml

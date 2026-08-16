@@ -13,6 +13,16 @@ on:
         required: false
         type: string
         default: ./Dockerfile
+      build-args:
+        description: Newline-separated non-secret Docker build arguments.
+        required: false
+        type: string
+        default: ""
+      target:
+        description: Optional Dockerfile build stage target.
+        required: false
+        type: string
+        default: ""
       image-name:
         description: Image name without registry, usually owner/repository or owner/repository/name.
         required: true
@@ -91,6 +101,8 @@ jobs:
           file: ${{ inputs.file }}
           push: true
           platforms: ${{ inputs.platforms }}
+          build-args: ${{ inputs.build-args }}
+          target: ${{ inputs.target }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
