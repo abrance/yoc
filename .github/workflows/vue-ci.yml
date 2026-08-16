@@ -1,0 +1,109 @@
+name: Vue CI
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Directory containing the Vue project.
+        required: false
+        type: string
+        default: .
+      node-version:
+        description: Node.js version to install.
+        required: false
+        type: string
+        default: "20"
+      package-manager:
+        description: Package manager used by the Vue project. Supported values are npm, pnpm, and yarn.
+        required: false
+        type: string
+        default: npm
+      cache:
+        description: Enable setup-node dependency cache.
+        required: false
+        type: boolean
+        default: true
+      install-command:
+        description: Dependency installation command.
+        required: false
+        type: string
+        default: npm ci
+      lint-command:
+        description: Lint command. Leave empty to skip.
+        required: false
+        type: string
+        default: npm run lint
+      typecheck-command:
+        description: Typecheck command. Leave empty to skip.
+        required: false
+        type: string
+        default: npm run typecheck
+      test-command:
+        description: Test command. Leave empty to skip.
+        required: false
+        type: string
+        default: npm test
+      build-command:
+        description: Build command. Leave empty to skip.
+        required: false
+        type: string
+        default: npm run build
+      cache-dependency-path:
+        description: Lockfile path used by setup-node cache.
+        required: false
+        type: string
+        default: package-lock.json
+
+permissions:
+  contents: read
+
+jobs:
+  vue-ci:
+    name: Vue CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        if: inputs.package-manager != 'npm'
+        run: corepack enable
+
+      - name: Set up Node.js with cache
+        if: inputs.cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: ${{ inputs.package-manager }}
+          cache-dependency-path: ${{ inputs.cache-dependency-path }}
+
+      - name: Set up Node.js without cache
+        if: ${{ !inputs.cache }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Install dependencies
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.install-command }}
+
+      - name: Run lint
+        if: inputs.lint-command != ''
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.lint-command }}
+
+      - name: Run typecheck
+        if: inputs.typecheck-command != ''
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.typecheck-command }}
+
+      - name: Run tests
+        if: inputs.test-command != ''
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.test-command }}
+
+      - name: Build
+        if: inputs.build-command != ''
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.build-command }}

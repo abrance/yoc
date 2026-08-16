@@ -1,0 +1,19 @@
+name: React CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  react-ci:
+    uses: owner/yoc/.github/workflows/react-ci.yml@v1
+    with:
+      working-directory: .
+      node-version: "20"
+      package-manager: npm
+      install-command: npm ci
+      lint-command: npm run lint
+      typecheck-command: npm run typecheck
+      test-command: npm test
+      build-command: npm run build

@@ -1,0 +1,26 @@
+name: Docker
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ['v*.*.*']
+
+jobs:
+  docker-build:
+    if: github.event_name == 'pull_request'
+    uses: owner/yoc/.github/workflows/docker-build.yml@v1
+    with:
+      image-name: ${{ github.repository }}
+      context: .
+      file: ./Dockerfile
+
+  docker-publish:
+    if: github.event_name == 'push'
+    uses: owner/yoc/.github/workflows/docker-publish-ghcr.yml@v1
+    with:
+      image-name: ${{ github.repository }}
+      context: .
+      file: ./Dockerfile
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}

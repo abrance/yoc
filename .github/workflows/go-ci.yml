@@ -1,0 +1,92 @@
+name: Go CI
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Directory containing the Go module or workspace.
+        required: false
+        type: string
+        default: .
+      go-version:
+        description: Go version or version range to install.
+        required: false
+        type: string
+        default: stable
+      go-version-file:
+        description: Path to go.mod, go.work, .go-version, or .tool-versions. Ignored when go-version is set to a concrete version by the caller.
+        required: false
+        type: string
+        default: ""
+      cache:
+        description: Enable setup-go dependency cache.
+        required: false
+        type: boolean
+        default: true
+      cache-dependency-path:
+        description: Dependency file path used for setup-go cache.
+        required: false
+        type: string
+        default: go.sum
+      run-vet:
+        description: Run go vet.
+        required: false
+        type: boolean
+        default: true
+      run-tests:
+        description: Run go test.
+        required: false
+        type: boolean
+        default: true
+      run-build:
+        description: Run go build.
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  go-ci:
+    name: Go CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go from version
+        if: inputs.go-version-file == ''
+        uses: actions/setup-go@v7
+        with:
+          go-version: ${{ inputs.go-version }}
+          cache: ${{ inputs.cache }}
+          cache-dependency-path: ${{ inputs.cache-dependency-path }}
+
+      - name: Set up Go from version file
+        if: inputs.go-version-file != ''
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: ${{ inputs.go-version-file }}
+          cache: ${{ inputs.cache }}
+          cache-dependency-path: ${{ inputs.cache-dependency-path }}
+
+      - name: Download dependencies
+        working-directory: ${{ inputs.working-directory }}
+        run: go mod download
+
+      - name: Run go vet
+        if: inputs.run-vet
+        working-directory: ${{ inputs.working-directory }}
+        run: go vet ./...
+
+      - name: Run tests
+        if: inputs.run-tests
+        working-directory: ${{ inputs.working-directory }}
+        run: go test ./...
+
+      - name: Build
+        if: inputs.run-build
+        working-directory: ${{ inputs.working-directory }}
+        run: go build ./...

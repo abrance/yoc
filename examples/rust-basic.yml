@@ -1,0 +1,17 @@
+name: Rust CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  rust-ci:
+    uses: owner/yoc/.github/workflows/rust-ci.yml@v1
+    with:
+      working-directory: .
+      rust-toolchain: stable
+      run-fmt: true
+      run-clippy: true
+      run-tests: true
+      run-build: true

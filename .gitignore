@@ -1,0 +1,45 @@
+# Local agent/tooling state
+.codegraph/
+.codebase-memory/
+.omo/
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.code-workspace
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Node/Vite fixtures
+node_modules/
+dist/
+dist-ssr/
+coverage/
+.vite/
+
+# Rust fixtures
+target/
+
+# Go fixtures
+*.test
+coverage.out
+
+# Build artifacts
+*.tar.gz
+*.sha256
+release-assets/
+artifacts/

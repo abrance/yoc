@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/**"
+      - "fixtures/**"
+      - "examples/**"
+      - "docs/**"
+      - "README.md"
+
+permissions:
+  contents: read
+
+jobs:
+  go-hello:
+    name: Go fixture
+    uses: ./.github/workflows/go-ci.yml
+    with:
+      working-directory: fixtures/go-hello
+      go-version-file: fixtures/go-hello/go.mod
+      cache-dependency-path: fixtures/go-hello/go.mod
+
+  rust-hello:
+    name: Rust fixture
+    uses: ./.github/workflows/rust-ci.yml
+    with:
+      working-directory: fixtures/rust-hello
+
+  react-hello:
+    name: React fixture
+    uses: ./.github/workflows/react-ci.yml
+    with:
+      working-directory: fixtures/react-hello
+      cache: false
+      install-command: npm install
+      lint-command: ""
+      test-command: ""
+
+  vue-hello:
+    name: Vue fixture
+    uses: ./.github/workflows/vue-ci.yml
+    with:
+      working-directory: fixtures/vue-hello
+      cache: false
+      install-command: npm install
+      lint-command: ""
+      test-command: ""
