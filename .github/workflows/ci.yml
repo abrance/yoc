@@ -35,7 +35,7 @@ jobs:
     with:
       working-directory: fixtures/react-hello
       cache: false
-      install-command: npm install
+      install-command: npm ci
       lint-command: ""
       test-command: ""
 
@@ -45,6 +45,6 @@ jobs:
     with:
       working-directory: fixtures/vue-hello
       cache: false
-      install-command: npm install
+      install-command: npm ci
       lint-command: ""
       test-command: ""

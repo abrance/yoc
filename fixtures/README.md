@@ -2,6 +2,8 @@
 
 These minimal projects exercise yoc reusable workflows without coupling them to a real product repository.
 
+Frontend fixture compiler versions are pinned instead of using `latest`, so CI remains reproducible and Vue's `vue-tsc` stays compatible with its TypeScript dependency.
+
 | Fixture | Workflow | Purpose |
 | --- | --- | --- |
 | `go-hello` | `.github/workflows/go-ci.yml` | Small Go HTTP hello server with a handler test. |
@@ -19,8 +21,8 @@ cargo test --manifest-path fixtures/rust-hello/Cargo.toml
 Frontend fixtures need dependencies first:
 
 ```bash
-(cd fixtures/react-hello && npm install && npm run build)
-(cd fixtures/vue-hello && npm install && npm run build)
+(cd fixtures/react-hello && npm ci && npm run build)
+(cd fixtures/vue-hello && npm ci && npm run build)
 ```
 
 ## Workflow Calls
@@ -43,7 +45,7 @@ For the frontend fixtures, override install and skip missing lint/test scripts:
 with:
   working-directory: fixtures/react-hello
   cache: false
-  install-command: npm install
+  install-command: npm ci
   lint-command: ""
   test-command: ""
 ```
