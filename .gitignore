@@ -43,3 +43,4 @@ coverage.out
 *.sha256
 release-assets/
 artifacts/
+docs/
