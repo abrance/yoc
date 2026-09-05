@@ -7,19 +7,19 @@ on:
 
 jobs:
   go-hello:
-    uses: owner/yoc/.github/workflows/go-ci.yml@v1
+    uses: owner/yoc/.github/workflows/go-ci.yml@v1.0.0
     with:
       working-directory: fixtures/go-hello
       go-version-file: fixtures/go-hello/go.mod
       cache-dependency-path: fixtures/go-hello/go.mod
 
   rust-hello:
-    uses: owner/yoc/.github/workflows/rust-ci.yml@v1
+    uses: owner/yoc/.github/workflows/rust-ci.yml@v1.0.0
     with:
       working-directory: fixtures/rust-hello
 
   react-hello:
-    uses: owner/yoc/.github/workflows/react-ci.yml@v1
+    uses: owner/yoc/.github/workflows/react-ci.yml@v1.0.0
     with:
       working-directory: fixtures/react-hello
       cache: false
@@ -28,7 +28,7 @@ jobs:
       test-command: ""
 
   vue-hello:
-    uses: owner/yoc/.github/workflows/vue-ci.yml@v1
+    uses: owner/yoc/.github/workflows/vue-ci.yml@v1.0.0
     with:
       working-directory: fixtures/vue-hello
       cache: false
