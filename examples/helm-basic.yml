@@ -1,0 +1,16 @@
+name: Helm CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  helm-ci:
+    uses: owner/yoc/.github/workflows/helm-ci.yml@main
+    with:
+      working-directory: charts
+      helm-version: latest
+      run-lint: true
+      run-template: true
+      run-unit: true

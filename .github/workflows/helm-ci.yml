@@ -1,0 +1,82 @@
+name: Helm Chart CI
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Directory containing Helm charts.
+        required: false
+        type: string
+        default: charts
+      helm-version:
+        description: Helm version to install, e.g. v3.17.0.
+        required: false
+        type: string
+        default: latest
+      run-lint:
+        description: Run helm lint on every chart to catch schema and template issues.
+        required: false
+        type: boolean
+        default: true
+      run-template:
+        description: Render helm template to validate charts render without errors.
+        required: false
+        type: boolean
+        default: true
+      run-unit:
+        description: Run helm-unittest on charts containing tests.
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  helm-ci:
+    name: Helm Chart CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: ${{ inputs.helm-version }}
+
+      - name: Install helm-unittest plugin
+        if: ${{ inputs.run-unit }}
+        run: helm plugin install https://github.com/helm-unittest/helm-unittest.git
+
+      - name: Detect chart directories
+        id: charts
+        run: |
+          CHARTS=$(find "${{ inputs.working-directory }}" -name Chart.yaml -printf '%h\n' 2>/dev/null | sort -u | tr '\n' ' ' | sed 's/ $//')
+          if [ -z "$CHARTS" ]; then
+            echo "::error::No Helm charts found under ${{ inputs.working-directory }}"
+            exit 1
+          fi
+          echo "charts=${CHARTS}" >> "$GITHUB_OUTPUT"
+
+      - name: Helm lint
+        if: ${{ inputs.run-lint }}
+        run: |
+          for chart in ${{ steps.charts.outputs.charts }}; do
+            helm lint "$chart"
+          done
+
+      - name: Helm template
+        if: ${{ inputs.run-template }}
+        run: |
+          for chart in ${{ steps.charts.outputs.charts }}; do
+            helm template "$chart" "$chart"
+          done
+
+      - name: Helm unittest
+        if: ${{ inputs.run-unit }}
+        run: |
+          for chart in ${{ steps.charts.outputs.charts }}; do
+            helm unittest "$chart"
+          done
