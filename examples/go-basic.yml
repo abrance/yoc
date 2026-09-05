@@ -7,7 +7,7 @@ on:
 
 jobs:
   go-ci:
-    uses: owner/yoc/.github/workflows/go-ci.yml@v1
+    uses: owner/yoc/.github/workflows/go-ci.yml@v1.0.0
     with:
       working-directory: .
       go-version-file: go.mod

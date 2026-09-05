@@ -7,7 +7,7 @@ on:
 
 jobs:
   react-ci:
-    uses: owner/yoc/.github/workflows/react-ci.yml@v1
+    uses: owner/yoc/.github/workflows/react-ci.yml@v1.0.0
     with:
       working-directory: .
       node-version: "20"
