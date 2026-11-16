@@ -47,6 +47,11 @@ on:
         required: false
         type: string
         default: ""
+      runs-on:
+        description: JSON array of runner labels, e.g. '["self-hosted","linux","x64"]'. Default keeps GitHub-hosted runners.
+        required: false
+        type: string
+        default: '["ubuntu-latest"]'
     secrets:
       github-token:
         description: Token used to publish to GHCR. Pass secrets.GITHUB_TOKEN unless using a PAT.
@@ -66,7 +71,7 @@ permissions:
 jobs:
   docker-publish:
     name: Docker Publish GHCR
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     outputs:
       digest: ${{ steps.build.outputs.digest }}
       metadata-tags: ${{ steps.meta.outputs.tags }}
