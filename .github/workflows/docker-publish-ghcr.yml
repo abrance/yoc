@@ -52,6 +52,16 @@ on:
         required: false
         type: string
         default: '["ubuntu-latest"]'
+      buildkit-config:
+        description: Optional buildkitd.toml content (e.g. docker.io registry mirrors). Needed on self-hosted runners, whose buildkit container does not inherit the host daemon.json mirrors.
+        required: false
+        type: string
+        default: ""
+      cache:
+        description: Use the GitHub Actions cache backend (cache-from/cache-to type=gha). Turn off where that backend is slow.
+        required: false
+        type: boolean
+        default: true
     secrets:
       github-token:
         description: Token used to publish to GHCR. Pass secrets.GITHUB_TOKEN unless using a PAT.
@@ -80,7 +90,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Set up Docker Buildx (custom buildkitd config)
+        if: inputs.buildkit-config != ''
+        uses: docker/setup-buildx-action@v4
+        with:
+          config-inline: ${{ inputs.buildkit-config }}
+
       - name: Set up Docker Buildx
+        if: inputs.buildkit-config == ''
         uses: docker/setup-buildx-action@v4
 
       - name: Log in to GHCR
@@ -110,5 +127,5 @@ jobs:
           target: ${{ inputs.target }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: ${{ inputs.cache && 'type=gha' || '' }}
+          cache-to: ${{ inputs.cache && 'type=gha,mode=max' || '' }}
